@@ -1,65 +1,79 @@
-import createInvoice from "@/action";
+import { updateInvoice } from "@/action";
+import supabase from "@/lib/supabaseClient";
+import { redirect } from "next/navigation";
 
-export default function form() {
+export default async function EditPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const { data: invoice } = await supabase
+    .from("invoices")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (!invoice) {
+    redirect("/");
+  }
+
+  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
+
   return (
     <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold mb-4">Create Invoice</h1>
+      <h1 className="text-2xl font-bold mb-4">Edit Invoice</h1>
 
-      <form action={createInvoice} className="space-y-4">
+      <form action={updateInvoiceWithId} className="space-y-4">
         <div>
           <label className="block mb-1">Client Name</label>
           <input
             name="client_name"
-            id="client"
-            type="text"
-            required
+            defaultValue={invoice.client_name}
             className="w-full p-2 rounded bg-slate-900 outline-1 outline-white/10 focus:outline-indigo-500"
+            type="text"
           />
         </div>
 
         <div>
           <label className="block mb-1">Email</label>
           <input
-            id="email"
             name="email"
-            type="email"
-            required
+            defaultValue={invoice.email}
             className="w-full p-2 rounded bg-slate-900 outline-1 outline-white/10 focus:outline-indigo-500"
+            type="email"
           />
         </div>
 
         <div>
           <label className="block mb-1">Amount</label>
           <input
-            id="amount"
             name="amount"
-            type="number"
-            required
+            defaultValue={invoice.amount}
             className="w-full p-2 rounded bg-slate-900 outline-1 outline-white/10 focus:outline-indigo-500"
+            type="number"
           />
         </div>
 
         <div>
           <label className="block mb-1">Status</label>
           <select
-            id="status"
             name="status"
-            required
+            defaultValue={invoice.status}
             className="w-full p-2 rounded bg-slate-900 outline-1 outline-white/10 focus:outline-indigo-500"
           >
-            <option value="paid">Paid</option>
             <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
           </select>
         </div>
 
         <div>
           <label className="block mb-1">Due Date</label>
           <input
-            id="due_date"
             name="due_date"
-            type="date"
-            required
+            defaultValue={invoice.due_date}
             className="w-full p-2 rounded bg-slate-900 outline-1 outline-white/10 focus:outline-indigo-500"
+            type="date"
           />
         </div>
 
@@ -67,7 +81,7 @@ export default function form() {
           type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded w-full cursor-pointer"
         >
-          Tambah Data
+          Update Data
         </button>
       </form>
     </div>

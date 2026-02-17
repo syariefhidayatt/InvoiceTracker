@@ -14,7 +14,7 @@ export default async function createInvoice(formData: FormData) {
   };
   const { error } = await supabase.from("invoices").insert(rawFormData);
   if (error) {
-    console.log("error dari supabase", error.message);
+    console.log("error saat create dari supabase", error.message);
   }
   revalidatePath("/");
   redirect("/");
@@ -28,13 +28,26 @@ export async function deleteInvoice(id: number) {
   revalidatePath("/");
 }
 
+export async function updateInvoice(id: number, formData: FormData) {
+  const rawFormData = {
+    client_name: formData.get("client_name"),
+    email: formData.get("email"),
+    amount: formData.get("amount"),
+    status: formData.get("status"),
+    due_date: formData.get("due_date"),
+  };
+  await supabase.from("invoices").update(rawFormData).eq("id", id);
+  revalidatePath("/");
+  redirect("/");
+}
+
 export async function updateStatus(id: number, newStatus: string) {
   const { error } = await supabase
     .from("invoices")
     .update({ status: newStatus })
     .eq("id", id);
   if (error) {
-    console.log("error dari supabase", error.message);
+    console.log("error saat update status dari supabase", error.message);
   }
   revalidatePath("/");
 }
