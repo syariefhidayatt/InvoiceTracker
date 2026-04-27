@@ -1,28 +1,28 @@
 "use client";
 
 import { useActionState } from "react";
-import createInvoice from "@/action";
-import { State } from "@/action";
+import { updateInvoice, State } from "@/action";
+import { InvoiceType } from "@/lib/types";
 
-export default function CreateForm() {
+export default function EditForm({ invoice }: { invoice: InvoiceType }) {
   const initialState: State = { errors: {}, message: null };
+  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
   const [state, formAction, isPending] = useActionState(
-    createInvoice,
+    updateInvoiceWithId,
     initialState,
   );
   return (
     <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold mb-4">Create Invoice</h1>
+      <h1 className="text-2xl font-bold mb-4">Edit Invoice</h1>
 
       <form action={formAction} className="space-y-4">
         <div>
           <label className="block mb-1">Client Name</label>
           <input
-            id="client"
             name="client_name"
-            type="text"
-            required
+            defaultValue={invoice.client_name}
             className="w-full p-2 rounded bg-slate-900 outline-1 outline-white/10 focus:outline-indigo-500"
+            type="text"
           />
           {state?.errors?.client_name && (
             <p className="text-red-500 text-sm mt-1">
@@ -34,11 +34,10 @@ export default function CreateForm() {
         <div>
           <label className="block mb-1">Email</label>
           <input
-            id="email"
             name="email"
-            type="email"
-            required
+            defaultValue={invoice.email}
             className="w-full p-2 rounded bg-slate-900 outline-1 outline-white/10 focus:outline-indigo-500"
+            type="email"
           />
           {state?.errors?.email && (
             <p className="text-red-500 text-sm mt-1">{state.errors.email[0]}</p>
@@ -48,11 +47,10 @@ export default function CreateForm() {
         <div>
           <label className="block mb-1">Amount</label>
           <input
-            id="amount"
             name="amount"
-            type="number"
-            required
+            defaultValue={invoice.amount}
             className="w-full p-2 rounded bg-slate-900 outline-1 outline-white/10 focus:outline-indigo-500"
+            type="number"
           />
           {state?.errors?.amount && (
             <p className="text-red-500 text-sm mt-1">
@@ -64,17 +62,15 @@ export default function CreateForm() {
         <div>
           <label className="block mb-1">Status</label>
           <select
-            id="status"
             name="status"
-            required
-            defaultValue=""
+            defaultValue={invoice.status}
             className="w-full p-2 rounded bg-slate-900 outline-1 outline-white/10 focus:outline-indigo-500"
           >
             <option value="" disabled>
               -- Pilih Status --
             </option>
-            <option value="paid">Paid</option>
             <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
           </select>
           {state?.errors?.status && (
             <p className="text-red-500 text-sm mt-1">
@@ -86,11 +82,10 @@ export default function CreateForm() {
         <div>
           <label className="block mb-1">Due Date</label>
           <input
-            id="due_date"
             name="due_date"
-            type="date"
-            required
+            defaultValue={invoice.due_date}
             className="w-full p-2 rounded bg-slate-900 outline-1 outline-white/10 focus:outline-indigo-500"
+            type="date"
           />
           {state?.errors?.due_date && (
             <p className="text-red-500 text-sm mt-1">
